@@ -10,11 +10,12 @@ struct ContentView: View {
     @State private var stepStates: [StepState] = Array(repeating: .default, count: 8)
     @State private var stepActive: [Bool] = Array(repeating: true, count: 8)
 
-    // Light color palette
-    private let goldColor = Color(red: 0.75, green: 0.60, blue: 0.25)
-    private let darkGray = Color(red: 0.90, green: 0.90, blue: 0.92)
-    private let creamColor = Color(red: 0.20, green: 0.20, blue: 0.20)
-    private let backgroundColor = Color(red: 0.95, green: 0.95, blue: 0.97)
+    // Make Noise 0-CTRL color palette
+    private let goldColor = Color(red: 0.85, green: 0.75, blue: 0.45) // Warm gold
+    private let darkGray = Color(red: 0.12, green: 0.12, blue: 0.12) // Deep black
+    private let creamColor = Color(red: 0.95, green: 0.92, blue: 0.85) // Cream/off-white
+    private let backgroundColor = Color(red: 0.08, green: 0.08, blue: 0.08) // Almost black
+    private let panelColor = Color(red: 0.15, green: 0.15, blue: 0.15) // Charcoal
 
     var body: some View {
         ZStack {
@@ -68,9 +69,8 @@ struct ContentView: View {
             }
             .padding(24)
         }
-        .frame(minWidth: 1200, idealWidth: 1300, maxWidth: .infinity,
-               minHeight: 900, idealHeight: 1000, maxHeight: .infinity)
-        .preferredColorScheme(.light)
+        .frame(width: 1300, height: 1000)
+        .preferredColorScheme(.dark)
         .onAppear {
             // Sync UI state with audio engine on startup
             bpm = audioEngine.getBPM()
@@ -135,8 +135,12 @@ struct ContentView: View {
             }
         }
         .padding()
-        .background(darkGray.opacity(0.5))
+        .background(panelColor)
         .cornerRadius(8)
+        .overlay(
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(goldColor.opacity(0.2), lineWidth: 1)
+        )
     }
 
     // MARK: - Transport Controls
@@ -184,10 +188,10 @@ struct ContentView: View {
                     Text(audioEngine.isRunning ? "STOP" : "PLAY")
                 }
                 .font(.system(size: 16, weight: .bold))
-                .foregroundColor(backgroundColor)
+                .foregroundColor(audioEngine.isRunning ? creamColor : backgroundColor)
                 .padding(.horizontal, 32)
                 .padding(.vertical, 12)
-                .background(audioEngine.isRunning ? Color.red : goldColor)
+                .background(audioEngine.isRunning ? Color.red.opacity(0.8) : goldColor)
                 .cornerRadius(8)
             }
             .buttonStyle(.plain)
@@ -240,7 +244,7 @@ struct ContentView: View {
                 .foregroundColor(backgroundColor)
                 .padding(.horizontal, 24)
                 .padding(.vertical, 12)
-                .background(Color.purple)
+                .background(Color(red: 0.7, green: 0.5, blue: 0.8))
                 .cornerRadius(8)
             }
             .buttonStyle(.plain)
@@ -263,8 +267,12 @@ struct ContentView: View {
             .buttonStyle(.plain)
         }
         .padding()
-        .background(darkGray.opacity(0.5))
+        .background(panelColor)
         .cornerRadius(8)
+        .overlay(
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(goldColor.opacity(0.2), lineWidth: 1)
+        )
     }
 
     // MARK: - Step Sequencer (Vertical Columns)
@@ -353,8 +361,12 @@ struct ContentView: View {
                     )
                 }
                 .padding(12)
-                .background(darkGray.opacity(0.3))
+                .background(darkGray)
                 .cornerRadius(12)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(goldColor.opacity(0.15), lineWidth: 1)
+                )
             }
         }
     }
@@ -369,8 +381,12 @@ struct ContentView: View {
             meterView(label: "STRENGTH CV", value: currentStrengthCV)
         }
         .padding()
-        .background(darkGray.opacity(0.3))
+        .background(panelColor)
         .cornerRadius(8)
+        .overlay(
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(goldColor.opacity(0.2), lineWidth: 1)
+        )
     }
 
     private func meterView(label: String, value: Float) -> some View {

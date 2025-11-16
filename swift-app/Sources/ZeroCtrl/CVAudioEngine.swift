@@ -194,6 +194,9 @@ class CVAudioEngine: ObservableObject {
     func stop() {
         audioEngine?.stop()
         model.stop()
+        
+        // Reset current step atomics (thread-safe)
+        currentStepAtomic.store(0, ordering: .relaxed)
 
         DispatchQueue.main.async {
             self.isRunning = false
@@ -269,7 +272,7 @@ class CVAudioEngine: ObservableObject {
                 sampleRate: sampleRate
             )
             
-            // Cache current state for this buffer (avoid repeated getCurrentStepState calls)
+            // Cache current state once per buffer to avoid repeated lock acquisitions
             let cachedCurrentState = self.model.getCurrentStepState()
             let cachedCurrentStep = self.model.getCurrentStep()
             
@@ -304,12 +307,12 @@ class CVAudioEngine: ObservableObject {
                     var outputSample: Float = 0.0
                     
                     if self.isTestModeAtomic.load(ordering: .relaxed) {
-                        // TEST MODE: Generate audible sine wave based on pitch CV (use cached state)
+                        // TEST MODE: Generate audible sine wave based on pitch CV (use cached)
                         
                         // Map pitch CV (-5V to +5V) to frequency (110 Hz to 880 Hz)
                         // -5V = 110 Hz (A2), 0V = 440 Hz (A4), +5V = 880 Hz (A5)
                         let baseFreq = 440.0
-                        let octaves = Double(cachedCurrentState.pitchCv) // Use cached state
+                        let octaves = Double(cachedCurrentState.pitchCv)
                         let frequency = baseFreq * pow(2.0, octaves / 5.0)
                         
                         // Generate sine wave with proper phase accumulation

@@ -13,18 +13,19 @@ struct RotaryKnob: View {
     private let knobSize: CGFloat = 60
     private let sensitivity: CGFloat = 0.005
 
-    // Light color palette
-    private let goldColor = Color(red: 0.75, green: 0.60, blue: 0.25)
-    private let lightGray = Color(red: 0.90, green: 0.90, blue: 0.92)
+    // Make Noise color palette
+    private let goldColor = Color(red: 0.85, green: 0.75, blue: 0.45)
+    private let darkGray = Color(red: 0.12, green: 0.12, blue: 0.12)
+    private let creamColor = Color(red: 0.95, green: 0.92, blue: 0.85)
 
     var body: some View {
         VStack(spacing: 4) {
             ZStack {
                 // Knob background
                 Circle()
-                    .fill(lightGray)
+                    .fill(darkGray)
                     .frame(width: knobSize, height: knobSize)
-                    .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 2)
+                    .shadow(color: .black.opacity(0.5), radius: 3, x: 0, y: 2)
 
                 // Knob indicator line
                 Rectangle()
@@ -61,7 +62,7 @@ struct RotaryKnob: View {
             VStack(spacing: 2) {
                 Text(label)
                     .font(.system(size: 10, weight: .medium))
-                    .foregroundColor(.secondary)
+                    .foregroundColor(creamColor.opacity(0.6))
 
                 Text(String(format: "%.2fV", scaledValue()))
                     .font(.system(size: 9, design: .monospaced))
